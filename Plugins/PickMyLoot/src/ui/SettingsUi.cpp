@@ -16,7 +16,6 @@
 
 using PluginUi::Check;
 using PluginUi::Heading;
-using PluginUi::HelpMarker;
 using PluginUi::Hint;
 using PluginUi::LabelColumn;
 using PluginUi::Tip;
@@ -105,6 +104,9 @@ void PickMyLootPlugin::DrawSettings() {
     }
     ImGui::Spacing();
     DrawSectionDiagnostics();
+    ImGui::Spacing();
+    PluginUi::Hint("Originally created by Omer Faruk ARPA. Maintained by POEFixer. GPL-3.0.");
+    ImGui::Spacing();
     ImGui::PopID();
 
     if (m_dirty && !ImGui::IsAnyItemActive() && now - m_dirtyAt > 600) SaveSettings();
@@ -177,12 +179,12 @@ void PickMyLootPlugin::DrawHeader() {
 
 void PickMyLootPlugin::DrawSectionWhatToPick() {
     PluginUi::BeginCard("##what");
-    Heading(ICON_FA_LIST_CHECK, "What to pick");
-    HelpMarker("Open a category and tick the items you want picked up. The price next to each item comes from "
-               "POEFixer's price list (Settings -> Prices), in the currency chosen under Value pick.\n\n"
-               "Names match the English game client. The game's loot filter still decides which labels are "
-               "visible: an item whose label your filter hides cannot be clicked and is skipped after a few tries.\n\n"
-               "New league items join their category by themselves once you have seen one on the ground.");
+    Heading(ICON_FA_LIST_CHECK, "What to pick",
+            "Open a category and tick the items you want picked up. The price next to each item comes from "
+            "POEFixer's price list (Settings -> Prices), in the currency chosen under Value pick.\n\n"
+            "Names match the English game client. The game's loot filter still decides which labels are "
+            "visible: an item whose label your filter hides cannot be clicked and is skipped after a few tries.\n\n"
+            "New league items join their category by themselves once you have seen one on the ground.");
     // Categories in two columns on a wide pane (filled top to bottom), so it is
     // not one long list; an opened category grows only its own column. Each
     // column keeps room for long item names next to their prices.
@@ -479,12 +481,7 @@ void PickMyLootPlugin::DrawSectionDisplay() {
 }
 
 void PickMyLootPlugin::DrawSectionDiagnostics() {
-    const PluginUi::Palette pal = PluginUi::Colors();
-    PluginUi::BeginCard("##diagnostics");
-    ImGui::PushStyleColor(ImGuiCol_Text, pal.Accent);
-    const bool open = ImGui::TreeNodeEx("##diagTree", ImGuiTreeNodeFlags_SpanAvailWidth, ICON_FA_BUG "  Diagnostics");
-    ImGui::PopStyleColor();
-    if (open) {
+    if (PluginUi::BeginDiagnostics("Picking state, prices, the item panel and the items in range with their status.")) {
         static const std::vector<PickMyLoot::GroundItem> kNoItems;
         const std::vector<PickMyLoot::GroundItem>& items = m_frame ? m_frame->items : kNoItems;
         char line[256];
@@ -533,7 +530,6 @@ void PickMyLootPlugin::DrawSectionDiagnostics() {
             }
             ImGui::EndTable();
         }
-        ImGui::TreePop();
+        PluginUi::EndDiagnostics();
     }
-    PluginUi::EndCard();
 }
