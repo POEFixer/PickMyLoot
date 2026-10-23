@@ -358,6 +358,6 @@ extern "C" PLUGIN_API void DestroyPlugin(PluginSDK::Plugin* p) { delete p; }
 POEFIXER_PLUGIN_INFO(
     "PickMyLoot",
     "Pick My Loot",
-    "1.2.3",
+    "1.2.4",
     "Omer Faruk ARPA, POEFixer",
     "Picks up the ground items you tick, or anything above a price you set, nearest first, using POEFixer prices; pauses on panels, enemies, town or menu.")
