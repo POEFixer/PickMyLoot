@@ -1,6 +1,6 @@
 # Pick My Loot
 
-Current version: 1.2.4
+Current version: 1.2.5
 
 Requires POE2Fixer 364 or newer.
 
@@ -70,7 +70,10 @@ never fight over it.
 
 ## Known limits
 
-- Item names match the English game client.
+- The item lists use the English game names. With POEFixer 371 or later the
+  plugin recognises items in every game language (POEFixer names each item on
+  the ground in English), and an item seen on the ground this session is listed
+  as the game words it. An older POEFixer matches only the English client.
 - The game's loot filter decides which labels are shown. An item whose label
   the filter hides, or that does not fit in your inventory, cannot be picked:
   after 4 clicks without success it is skipped until you change area or restart
@@ -88,11 +91,12 @@ This repository is the plugin folder from the POE2Fixer source tree (`Plugins/Pi
 
 - `POEFixer/plugin_sdk/` - the POE2Fixer Plugin SDK v6 headers (`PluginAbi.h`, `PluginSDK.h`)
 - `POEFixer/imgui/` - the Dear ImGui sources the DLL compiles against
+- `tools/plugin_i18n/gen.py` - the translation tool: after editing `Plugins/PickMyLoot/lang/en.json` run `python tools/plugin_i18n/gen.py Plugins/PickMyLoot` (it rewrites the embedded English header); `--gate` checks every language file and the keys the sources use
 
 1. Install Visual Studio 2022 with the "Desktop development with C++" workload (MSVC v143, Windows 10/11 SDK).
 2. Open `PickMyLoot.sln`, select **Release | x64** and build the solution.
 3. The plugin is written to `x64\Release\Plugins\PickMyLoot\PickMyLoot.dll` (Release builds carry no debug information, see `Directory.Build.targets`).
-4. Copy `PickMyLoot.dll` into `Plugins\PickMyLoot\` next to the POE2Fixer executable.
+4. Copy `PickMyLoot.dll` into `Plugins\PickMyLoot\` next to the POE2Fixer executable, together with `Plugins\PickMyLoot\lang` from this repository (same folder names).
 
 ## Credits
 

@@ -31,6 +31,24 @@
 
 namespace PickMyLoot {
 
+// The pickup decision of a pass. Ticks and prices go by the English identity name (the lists'
+// names), so they work in every game language; an item not named yet waits for a later pass.
+inline void MarkWanted(const PickMyLootConfig::Settings& cfg, PriceBook& prices, const PluginSDK::Context* ctx,
+                       std::vector<GroundItem>& items) {
+    const double threshold = cfg.EffectiveThreshold();
+    for (GroundItem& g : items) {
+        if (g.englishName.empty()) continue;
+        const PriceEntry* p = prices.Get(ctx, g.englishName);
+        if (p && p->known) g.priceCategory = p->category;
+        if (cfg.NameEnabled(g.englishName)) {
+            g.wanted = true;
+        } else if (cfg.valueFilterEnabled && p && p->known) {
+            const double v = p->In(cfg.referenceCurrency);
+            g.wanted = v >= 0.0 && v >= threshold;
+        }
+    }
+}
+
 // One published pass. Never modified after publication.
 struct LootFrame {
     uint64_t seq = 0;
@@ -107,6 +125,7 @@ private:
     static constexpr unsigned long long kHeartbeatTimeoutMs = 400;
     static constexpr unsigned long long kEnemyCheckMs = 150;
     static constexpr int kPriceLookupsPerPass = 32;
+    static constexpr int kNameLookupsPerPass = 32;   // English identity names (host price lookups)
 
     void ResetState() {
         m_scanner.ClearCache();
@@ -281,18 +300,8 @@ private:
         const PluginSDK::ScreenSize disp = m_ctx->Game.GetScreenSize();
         if (disp.Width < 16.f || disp.Height < 16.f) return;
         m_prices.BeginFrame(m_ctx, kPriceLookupsPerPass, now);
-        m_scanner.Scan(m_ctx, snap, cfg.pickupRange, disp.Width, disp.Height, now, frame.items);
-        const double threshold = cfg.EffectiveThreshold();
-        for (GroundItem& g : frame.items) {
-            const PriceEntry* p = m_prices.Get(m_ctx, g.baseName);
-            if (p && p->known) g.priceCategory = p->category;
-            if (cfg.NameEnabled(g.baseName)) {
-                g.wanted = true;
-            } else if (cfg.valueFilterEnabled && p && p->known) {
-                const double v = p->In(cfg.referenceCurrency);
-                g.wanted = v >= 0.0 && v >= threshold;
-            }
-        }
+        m_scanner.Scan(m_ctx, snap, cfg.pickupRange, disp.Width, disp.Height, now, frame.items, kNameLookupsPerPass);
+        MarkWanted(cfg, m_prices, m_ctx, frame.items);
         frame.itemsScanned = true;
         m_pricesKnown.store(static_cast<int>(m_prices.Size()), std::memory_order_relaxed);
     }

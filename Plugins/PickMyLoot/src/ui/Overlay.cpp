@@ -9,7 +9,9 @@
 
 #include <algorithm>
 #include <cmath>
-#include <cstdio>
+#include <string>
+
+namespace I18n = PluginSDK::I18n;
 
 void PickMyLootPlugin::DrawUI() {
     if (!m_enabled || !ctx()->ImGuiContext) return;
@@ -47,13 +49,13 @@ void PickMyLootPlugin::DrawUI() {
         if (picking) col = IM_COL32(110, 220, 130, 255);
         else if (m_state == State::NoTarget) col = IM_COL32(120, 170, 240, 255);
         else if (StateIsActive(m_state)) col = IM_COL32(230, 190, 90, 255);
-        char state[96];
-        if (StateIsActive(m_state) && m_wantedVisible > 0)
-            std::snprintf(state, sizeof(state), "%s (%d left)", StateText(m_state), m_wantedVisible);
-        else
-            std::snprintf(state, sizeof(state), "%s", StateText(m_state));
+        const std::string state =
+            StateIsActive(m_state) && m_wantedVisible > 0
+                ? I18n::TrF("overlay_state_left",
+                            { { "state", StateText(m_state) }, { "count", std::to_string(m_wantedVisible) } })
+                : std::string(StateText(m_state));
         PfOverlay::StatusChip(dl, ImVec2(disp.Width, disp.Height), static_cast<PfOverlay::Anchor>(m_settings.statusAnchor), 0,
-                         scale, GetName(), state, col, m_settings.overlayOpacity);
+                         scale, GetName(), state.c_str(), col, m_settings.overlayOpacity);
     }
 }
 

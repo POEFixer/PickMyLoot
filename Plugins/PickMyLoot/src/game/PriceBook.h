@@ -20,15 +20,8 @@
 
 namespace PickMyLoot {
 
+// The order is the settings tab's currency list (ui/SettingsUi.cpp, which also names them).
 enum class RefCurrency : int { Divine = 0, Exalted = 1, Chaos = 2 };
-
-inline const char* RefShort(RefCurrency r) {
-    switch (r) {
-        case RefCurrency::Divine:  return "div";
-        case RefCurrency::Chaos:   return "c";
-        default:                   return "ex";
-    }
-}
 
 inline const char* RefKey(RefCurrency r) {
     switch (r) {

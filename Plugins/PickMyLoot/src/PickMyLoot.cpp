@@ -3,6 +3,13 @@
 // Pick My Loot, originally created by Omer Faruk ARPA
 // (https://github.com/omrfarukarpa/poefixer-pickmyloot), maintained by POEFixer.
 // Licensed under the GNU General Public License v3.0 (see LICENSE).
+//
+// Texts follow the program language (PluginI18n.h): lang/<code>.json next to the DLL, English
+// compiled in through lang_en.generated.h (python tools/plugin_i18n/gen.py Plugins/PickMyLoot
+// after editing lang/en.json). The game's item names stay as the game writes them.
+#include "../../../POEFixer/plugin_sdk/PluginSDK.h"
+#include "lang_en.generated.h"   // the embedded English: once per DLL, after PluginSDK.h
+
 #include "PickMyLootPlugin.h"
 
 #include "common/GameGates.h"
@@ -12,6 +19,8 @@
 
 #include <algorithm>
 #include <cmath>
+
+namespace I18n = PluginSDK::I18n;
 
 namespace {
 unsigned long long NowMs() { return ::GetTickCount64(); }
@@ -25,20 +34,20 @@ bool PickMyLootPlugin::WantsOverlay() const {
 
 const char* PickMyLootPlugin::StateText(State s) {
     switch (s) {
-        case State::Off:          return "Off";
-        case State::Binding:      return "Key set: release it";
-        case State::NotInGame:    return "Waiting for the game";
-        case State::MenuOpen:     return "Paused: POEFixer menu open";
-        case State::PanelOpen:    return "Paused: item panel open";
-        case State::GamePaused:   return "Paused: game paused";
-        case State::Dead:         return "Paused: dead";
-        case State::TownHideout:  return "Paused: town or hideout";
-        case State::EnemyNear:    return "Paused: enemy nearby";
-        case State::UserClicking: return "Paused: you are clicking";
-        case State::NoTarget:     return "Nothing to pick";
-        case State::Cooldown:     return "Picking";
-        case State::Aiming:       return "Picking";
-        case State::Clicked:      return "Picking";
+        case State::Off:          return I18n::Tr("state_off");
+        case State::Binding:      return I18n::Tr("state_binding");
+        case State::NotInGame:    return I18n::Tr("state_waiting_game");
+        case State::MenuOpen:     return I18n::Tr("state_paused_menu");
+        case State::PanelOpen:    return I18n::Tr("state_paused_panel");
+        case State::GamePaused:   return I18n::Tr("state_paused_game");
+        case State::Dead:         return I18n::Tr("state_paused_dead");
+        case State::TownHideout:  return I18n::Tr("state_paused_town");
+        case State::EnemyNear:    return I18n::Tr("state_paused_enemy");
+        case State::UserClicking: return I18n::Tr("state_paused_clicking");
+        case State::NoTarget:     return I18n::Tr("state_nothing");
+        case State::Cooldown:     return I18n::Tr("state_picking");
+        case State::Aiming:       return I18n::Tr("state_picking");
+        case State::Clicked:      return I18n::Tr("state_picking");
     }
     return "";
 }
@@ -189,10 +198,13 @@ void PickMyLootPlugin::LearnFromFrame(const PickMyLoot::LootFrame& frame, unsign
     if (frame.seq == m_learnedSeq) return;
     m_learnedSeq = frame.seq;
     // New league items: a base the catalog does not list joins the category
-    // the price service files it under, so it shows up in the lists.
+    // the price service files it under, so it shows up in the lists. Both go by
+    // the English identity name; the name the game showed feeds the lists' display.
     for (const auto& g : frame.items) {
-        if (g.priceCategory == PickMyLoot::Category::Count || m_catalog.Knows(g.baseName)) continue;
-        m_catalog.Learn(g.baseName, g.priceCategory);
+        if (g.englishName.empty()) continue;
+        m_seenNames.Note(g.englishName, g.baseName);
+        if (g.priceCategory == PickMyLoot::Category::Count || m_catalog.Knows(g.englishName)) continue;
+        m_catalog.Learn(g.englishName, g.priceCategory);
     }
     if (m_catalog.Dirty() && now - m_catalogSavedAt > 30000) {
         m_catalogSavedAt = now;
@@ -358,6 +370,6 @@ extern "C" PLUGIN_API void DestroyPlugin(PluginSDK::Plugin* p) { delete p; }
 POEFIXER_PLUGIN_INFO(
     "PickMyLoot",
     "Pick My Loot",
-    "1.2.4",
+    "1.2.5",
     "Omer Faruk ARPA, POEFixer",
     "Picks up the ground items you tick, or anything above a price you set, nearest first, using POEFixer prices; pauses on panels, enemies, town or menu.")

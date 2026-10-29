@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.5
+
+- Follows the program language (ten languages).
+- Works in every game language (POEFixer 371 and later): ticks, prices and new league items go by each item's English name, and an item seen on the ground is listed as the game words it.
+- Waystones and Precursor Tablets the item list does not know are filed by their game path, whatever the game language.
+- An item on the ground the program could not name yet (its item data still downloading) is asked again a second later, so it is picked by its English name once that arrives instead of by the game's name until the next area.
+
 ## 1.2.4
 
 - Works with the separate menu window (POEFixer 366): the host hands the plugin the right drawing context for its settings tab and for its overlay.

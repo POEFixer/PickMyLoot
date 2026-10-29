@@ -97,6 +97,7 @@
     <ClInclude Include="src\common\PanelGate.h" />
     <ClInclude Include="src\common\OverlayDraw.h" />
     <ClInclude Include="src\common\ImGuiText.h" />
+    <ClInclude Include="src\common\TextUtil.h" />
     <ClInclude Include="src\config\Settings.h" />
     <ClInclude Include="src\game\LootCatalog.h" />
     <ClInclude Include="src\game\LootScanner.h" />

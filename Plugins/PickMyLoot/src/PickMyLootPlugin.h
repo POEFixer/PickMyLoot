@@ -48,6 +48,7 @@ private:
         Aiming,        // cursor on the label, waiting for the hover to settle
         Clicked,
     };
+    // The state's text in the program language (drawing thread).
     static const char* StateText(State s);
     static bool StateIsActive(State s) { return s != State::Off && s != State::Binding; }
 
@@ -131,6 +132,7 @@ private:
     // The last worker frame the tick used (overlay and diagnostics read it).
     std::shared_ptr<const PickMyLoot::LootFrame> m_frame;
     uint64_t m_learnedSeq = 0;
+    PickMyLoot::SeenNames m_seenNames;   // English -> the name the game showed (this session)
     int   m_wantedVisible = 0;
     float m_playerWX = 0.f, m_playerWY = 0.f, m_playerWZ = 0.f;
     bool  m_havePlayer = false;

@@ -66,7 +66,10 @@ never fight over it.
 
 ## Known limits
 
-- Item names match the English game client.
+- The item lists use the English game names. With POEFixer 371 or later the
+  plugin recognises items in every game language (POEFixer names each item on
+  the ground in English), and an item seen on the ground this session is listed
+  as the game words it. An older POEFixer matches only the English client.
 - The game's loot filter decides which labels are shown. An item whose label
   the filter hides, or that does not fit in your inventory, cannot be picked:
   after 4 clicks without success it is skipped until you change area or restart

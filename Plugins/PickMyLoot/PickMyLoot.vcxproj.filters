@@ -74,6 +74,9 @@
     <ClInclude Include="src\common\ImGuiText.h">
       <Filter>src\common</Filter>
     </ClInclude>
+    <ClInclude Include="src\common\TextUtil.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
     <ClInclude Include="src\config\Settings.h">
       <Filter>src\config</Filter>
     </ClInclude>
