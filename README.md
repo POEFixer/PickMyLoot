@@ -1,6 +1,6 @@
 # Pick My Loot
 
-Current version: 1.2.5
+Current version: 1.2.6
 
 Requires POE2Fixer 364 or newer.
 
